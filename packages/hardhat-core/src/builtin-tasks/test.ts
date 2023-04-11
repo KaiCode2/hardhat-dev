@@ -99,6 +99,19 @@ subtask(TASK_TEST_RUN_MOCHA_TESTS)
           mochaRequire.push("hardhat/register");
         }
         mochaConfig.require = mochaRequire;
+
+        // if parallel mode set, include argv in process.env so parallel
+        // processes can access CLI arguments
+        mochaConfig.rootHooks = {
+          beforeAll: (done: () => void) => {
+            process.env.argv = JSON.stringify(process.argv);
+            done();
+          },
+          afterAll: (done: () => void) => {
+            delete process.env.argv;
+            done();
+          },
+        };
       }
 
       const mocha = new Mocha(mochaConfig);
@@ -128,7 +141,9 @@ subtask(TASK_TEST_RUN_MOCHA_TESTS)
       }
 
       const testFailures = await new Promise<number>((resolve) => {
+        // mocha.globalSetup(mocha.run);
         mocha.run(resolve);
+        // mocha.globalTeardown(mocha.run);
       });
 
       mocha.dispose();

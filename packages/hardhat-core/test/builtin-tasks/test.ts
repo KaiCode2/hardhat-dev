@@ -43,7 +43,7 @@ describe("test task (CJS)", function () {
     });
   });
 
-  describe("parallel tests", function () {
+  describe.only("parallel tests", function () {
     describe("with the default config in serial mode", function () {
       useFixtureProject("test-task/parallel-tests/serial");
       useEnvironment();
